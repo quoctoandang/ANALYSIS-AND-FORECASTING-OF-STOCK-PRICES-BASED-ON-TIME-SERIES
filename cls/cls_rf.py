@@ -6,6 +6,7 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import train_test_split, cross_val_score, KFold
 from sklearn.metrics import mean_squared_error, r2_score, mean_absolute_error, mean_absolute_percentage_error
 import seaborn as sns
+import joblib
 
 class RfConfig:
     def __init__(self):
@@ -67,6 +68,11 @@ class RfConfig:
         rf_model.fit(X_train, y_train)
         return rf_model
     
+    def save_model(self, rf_model, filename):
+        """Save the trained Random Forest model to a file."""
+        joblib.dump(rf_model, filename)
+        print(f'Model saved to {filename}')
+
     def predict(self, rf_model, X_test):
         """Make predictions using the Random Forest model."""
         return rf_model.predict(X_test)
@@ -146,7 +152,7 @@ class RfConfig:
         # Create and train model
         rf_model = self.get_rf_model()
         rf_model = self.fit(rf_model, X_train, y_train)
-        
+        self.save_model(rf_model, "../model_save/rf_model.pkl")
         # Predict
         rf_pred = self.predict(rf_model, X_test)
         

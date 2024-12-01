@@ -10,7 +10,7 @@ from sklearn.metrics import mean_absolute_error, mean_absolute_percentage_error
 from seaborn import histplot
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.model_selection import KFold, cross_val_score
-
+import joblib
 
 
 class XGboostConfig():
@@ -53,7 +53,7 @@ class XGboostConfig():
         
         return abs(cv_scores).mean()
     
-    def plot_result(self, train, test, pred, true):
+    def plot_result(self, train, test, y_test, pred, true):
         fig, axes = plt.subplots(2, 1, sharex=False, figsize=(9, 6), tight_layout=True, gridspec_kw={'height_ratios': [1.5, 1]})
 
         axes[0].plot(train['close'], label='train')
@@ -65,8 +65,8 @@ class XGboostConfig():
         # zoomed view
         axes[1].plot(test.index, true, linewidth=1.5, label='test')
         axes[1].plot(test.index, pred, label='forecast')
-        axes[1].set_xlim(test.index[0], test.index[-1])
-        axes[1].set_ylim(850)
+        axes[1].set_xlim(test.index[0], test.index[-1]) 
+        axes[1].set_ylim(min(y_test.min(), pred.min()), max(y_test.max(), pred.max()))
         axes[1].legend()
 
         plt.show()
@@ -91,7 +91,8 @@ class XGboostConfig():
         xgb_model.fit(X_train, y_train, eval_set=[(X_train, y_train), (X_test, y_test)], verbose=False)
         xgb_kwargs = xgb_model.best_params_
         print('\nBest parameters for XGBoosting:\n', xgb_kwargs)
-        
+        model_path = "../model_save/xgboost_model.joblib"
+        joblib.dump(xgb_model.best_estimator_, model_path)
         xgb_predictions = xgb_model.predict(X_test).reshape(-1, 1)
         xgb_pred_copies = np.repeat(xgb_predictions, test.shape[1], axis=-1)
 
@@ -100,7 +101,7 @@ class XGboostConfig():
         true = self.scaler.inverse_transform(true_copies)[:, 0]
         # display trues vs. forecasts
         xgb_estimator = XGBRegressor(**xgb_kwargs)
-
+        
         rmse = np.sqrt(mean_squared_error(true, xgb_pred))
         cv_rmse =  self.cross_validation(X_train, y_train, xgb_estimator)
         r2 = r2_score(true, xgb_pred)
@@ -124,7 +125,7 @@ class XGboostConfig():
         print(f'Results saved to {path}')
 
         xgb_residuals = true - xgb_pred
-        self.plot_result(train, test, xgb_pred, true)
+        self.plot_result(train, test, y_test, xgb_pred, true)
         self.plot_residuals(xgb_residuals)
 
 if __name__ == '__main__':

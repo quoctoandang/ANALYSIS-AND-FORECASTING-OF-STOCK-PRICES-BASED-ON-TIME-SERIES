@@ -13,6 +13,7 @@ from sklearn.model_selection import TimeSeriesSplit
 import matplotlib.pyplot as plt
 from seaborn import histplot
 import time
+import joblib
 
 
 
@@ -43,7 +44,8 @@ class Sarima_predictions():
         model  = auto_arima(y=y_train,
                     X=x_train,
                     m = 7,
-                    start_P=0,
+                    max_P=5,
+                    max_Q=5,
                     seasonal=True,
                     test='adf',
                     alpha=0.05,              
@@ -70,14 +72,11 @@ class Sarima_predictions():
             mle_regression=True
         )
         model_fit = model.fit(disp=0)
-        residual = model_fit.resid
-        residual_df = pd.DataFrame(residual, columns=['Residual'])
-        residual_df.to_csv('../results/sarimax/residuals.csv', index=False)
-        time.sleep(1000000)
-
-
         print("Model's AIC = {:.4f}".format(model_fit.aic))
         print(model_fit.summary())
+
+        model_filename = "../model_save/sarimax_model.pkl"
+        joblib.dump(model_fit, model_filename)
 
         return model_fit, orders, seasonal_orders
     

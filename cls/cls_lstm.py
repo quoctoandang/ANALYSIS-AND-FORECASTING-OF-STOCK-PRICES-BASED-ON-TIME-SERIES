@@ -101,6 +101,9 @@ class LSTMConfig():
                         verbose=1,
                         callbacks=None
                         )
+
+        model_path = '../model_save/lstm_model.h5'  
+        lstm_model.save(model_path)
         
         return lstm_history
     
@@ -110,7 +113,7 @@ class LSTMConfig():
         lstm_pred = self.scaler.inverse_transform(prediction_copies)[:, 0]
         return lstm_pred
     
-    def plot_result(self ,train, test, lstm_pred, true):
+    def plot_result(self ,train, test,y_test, lstm_pred, true):
         fig, axes = plt.subplots(2, 1, sharex=False, figsize=(9, 6), tight_layout=True, gridspec_kw={'height_ratios': [1.5, 1]})
 
         axes[0].plot(train['close'], label='train')
@@ -122,8 +125,8 @@ class LSTMConfig():
         # zoomed view
         axes[1].plot(test[self.prediction_step:].index, true, linewidth=1.5, label='test')
         axes[1].plot(test[self.prediction_step:].index, lstm_pred, label='forecast')
-        axes[1].set_xlim(pd.Timestamp('2023-01-01'), test.index[-1])
-        axes[1].set_ylim(850)
+        axes[1].set_xlim(y_test.index[0], test.index[-1]) 
+        axes[1].set_ylim(min(y_test.min(), lstm_pred.min()), max(y_test.max(), lstm_pred.max()))
         axes[1].legend()
 
         plt.show()
@@ -224,7 +227,7 @@ class LSTMConfig():
         lstm_resid = true - lstm_pred
         # visualize
         self.plot_LSTM_loss(lstm_history)
-        self.plot_result(train, test, lstm_pred, true)
+        self.plot_result(train,test, y_test, lstm_pred, true)
         self.plot_Residuals(lstm_resid)
 
 if __name__ == '__main__':
