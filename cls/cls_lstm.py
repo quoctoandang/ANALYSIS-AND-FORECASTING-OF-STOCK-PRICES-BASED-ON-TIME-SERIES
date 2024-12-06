@@ -49,7 +49,7 @@ class LSTMConfig():
         prediction_step = 50
         for i in range(prediction_step, cut_off):
             X_train.append(scaled_train[i - prediction_step:i, 0:scaled_train.shape[1]])
-            y_train.append(scaled_train[i, 0])
+            y_train.append(scaled_train[i, -1])
         X_train, y_train = np.array(X_train), np.array(y_train)
         y_train = np.reshape(y_train, (y_train.shape[0], 1))
         print('X_train shape :', X_train.shape)
@@ -57,7 +57,7 @@ class LSTMConfig():
 
         for i in range(prediction_step, test_length):
             X_test.append(scaled_test[i - prediction_step:i, 0:scaled_test.shape[1]])
-            y_test.append(scaled_test[i, 0])
+            y_test.append(scaled_test[i, -1])
         X_test, y_test = np.array(X_test), np.array(y_test)
         y_test = np.reshape(y_test, (-1, 1))
         
@@ -110,7 +110,7 @@ class LSTMConfig():
     def predict(self, lstm_model, X_test, test):
         lstm_predictions = lstm_model.predict(X_test)
         prediction_copies = np.repeat(lstm_predictions, test.shape[1], axis=-1)
-        lstm_pred = self.scaler.inverse_transform(prediction_copies)[:, 0]
+        lstm_pred = self.scaler.inverse_transform(prediction_copies)[:, -1]
         return lstm_pred
     
     def plot_result(self ,train, test,y_test, lstm_pred, true):
@@ -125,7 +125,7 @@ class LSTMConfig():
         # zoomed view
         axes[1].plot(test[self.prediction_step:].index, true, linewidth=1.5, label='test')
         axes[1].plot(test[self.prediction_step:].index, lstm_pred, label='forecast')
-        axes[1].set_xlim(y_test.index[0], test.index[-1]) 
+        axes[1].set_xlim(test.index[0], test.index[-1]) 
         axes[1].set_ylim(min(y_test.min(), lstm_pred.min()), max(y_test.max(), lstm_pred.max()))
         axes[1].legend()
 
