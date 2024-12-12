@@ -66,6 +66,7 @@ class LSTMConfig():
 
         return train, test, X_train, X_test, y_train, y_test
     
+    
     def get_lstm_model(self, X_train):
         '''
         Returns LSTM model.

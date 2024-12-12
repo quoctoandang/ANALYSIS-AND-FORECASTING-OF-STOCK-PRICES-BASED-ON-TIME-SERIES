@@ -7,6 +7,7 @@ from sklearn.model_selection import train_test_split, cross_val_score, KFold
 from sklearn.metrics import mean_squared_error, r2_score, mean_absolute_error, mean_absolute_percentage_error
 import seaborn as sns
 import joblib
+from sklearn.model_selection import GridSearchCV
 
 class RfConfig:
     def __init__(self):
@@ -59,10 +60,42 @@ class RfConfig:
         
         return data, X_train_scaled, X_test_scaled, y_train, y_test
     
+
     def get_rf_model(self):
         """Create Random Forest Regressor model."""
         return RandomForestRegressor(**self.rf_params)
     
+
+    def grid_search_rf(self, X_train, y_train):
+        """Perform hyperparameter tuning using GridSearchCV."""
+        param_grid = {
+            'n_estimators': [100, 200, 300],
+            'max_depth': [None, 10, 20, 30],
+            'min_samples_split': [2, 5, 10],
+            'min_samples_leaf': [1, 2, 4],
+            'max_features': ['auto', 'sqrt', 'log2']
+        }
+        
+        rf_model = RandomForestRegressor(random_state=42)
+        grid_search = GridSearchCV(
+            estimator=rf_model, 
+            param_grid=param_grid, 
+            scoring='neg_root_mean_squared_error', 
+            cv=5, 
+            n_jobs=-1, 
+            verbose=2
+        )
+        
+        # Perform the grid search
+        grid_search.fit(X_train, y_train)
+        
+        # Get the best parameters and model
+        best_params = grid_search.best_params_
+        best_model = grid_search.best_estimator_
+        
+        print("Best Hyperparameters:", best_params)
+        return best_model, best_params
+
     def fit(self, rf_model, X_train, y_train):
         """Fit the Random Forest model."""
         rf_model.fit(X_train, y_train)
@@ -150,9 +183,10 @@ class RfConfig:
         full_data, X_train, X_test, y_train, y_test = self.split_and_transform_data(data)
         
         # Create and train model
-        rf_model = self.get_rf_model()
+        # rf_model = self.get_rf_model()
+        rf_model, best_params = self.grid_search_rf(X_train, y_train)
         rf_model = self.fit(rf_model, X_train, y_train)
-        self.save_model(rf_model, "../model_save/rf_model.pkl")
+        self.save_model(rf_model, "../model_save/rf_model_best.pkl")
         # Predict
         rf_pred = self.predict(rf_model, X_test)
         
