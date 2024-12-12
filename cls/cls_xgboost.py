@@ -90,6 +90,7 @@ class XGboostConfig():
         xgb_model = GridSearchCV(estimator=XGBRegressor(), param_grid=self.xgb_param_grid, verbose=1)
         xgb_model.fit(X_train, y_train, eval_set=[(X_train, y_train), (X_test, y_test)], verbose=False)
         xgb_kwargs = xgb_model.best_params_
+        print(xgb_kwargs)
         print('\nBest parameters for XGBoosting:\n', xgb_kwargs)
         model_path = "../model_save/xgboost_model.joblib"
         joblib.dump(xgb_model.best_estimator_, model_path)

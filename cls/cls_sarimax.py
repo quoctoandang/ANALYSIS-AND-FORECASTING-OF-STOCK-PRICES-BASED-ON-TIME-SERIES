@@ -55,6 +55,8 @@ class Sarima_predictions():
                     suppress_warnings=True, 
                     trace=True,
                     scoring='mse')
+        print("Best order (p, d, q):", model.order)
+        print("Best seasonal order (P, D, Q, m):", model.seasonal_order)
         return model.order, model.seasonal_order
     
     def fit(self, x_train, y_train):
