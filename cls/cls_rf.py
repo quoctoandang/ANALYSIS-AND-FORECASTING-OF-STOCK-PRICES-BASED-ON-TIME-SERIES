@@ -1,7 +1,6 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-from sklearn.preprocessing import MinMaxScaler
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import train_test_split, cross_val_score, KFold
 from sklearn.metrics import mean_squared_error, r2_score, mean_absolute_error, mean_absolute_percentage_error
@@ -11,8 +10,6 @@ from sklearn.model_selection import GridSearchCV
 
 class RfConfig:
     def __init__(self):
-        self.scaler = MinMaxScaler(feature_range=(0, 1))
-        self.prediction_step = 50
         self.rf_params = {
             'n_estimators': 300,  # Tăng số lượng cây do có nhiều dữ liệu
             'max_depth': None,  # Cho phép cây phát triển tự do với dữ liệu đủ lớn
@@ -33,11 +30,10 @@ class RfConfig:
     
     def prepare_sequences(self, data, prediction_step=50):
         """Prepare sequential input for time series prediction."""
-        X, y = [], []
-        for i in range(prediction_step, len(data)):
-            X.append(data.iloc[i-prediction_step:i].values.flatten())
-            y.append(data.iloc[i]['close'])
-        return np.array(X), np.array(y)
+        X = data.iloc[:, :-1]
+        y = data['close']
+
+        return X, y
     
     def split_and_transform_data(self, data, split_ratio=0.8):
         """Split data into train and test sets."""
@@ -50,15 +46,13 @@ class RfConfig:
         )
         
         # Scale the data
-        X_train_scaled = self.scaler.fit_transform(X_train)
-        X_test_scaled = self.scaler.transform(X_test)
         
-        print('X_train shape:', X_train_scaled.shape)
-        print('X_test shape:', X_test_scaled.shape)
+        print('X_train shape:', X_train.shape)
+        print('X_test shape:', X_test.shape)
         print('y_train shape:', y_train.shape)
         print('y_test shape:', y_test.shape)
         
-        return data, X_train_scaled, X_test_scaled, y_train, y_test
+        return data, X_train, X_test, y_train, y_test
     
 
     def get_rf_model(self):
@@ -110,13 +104,14 @@ class RfConfig:
         """Make predictions using the Random Forest model."""
         return rf_model.predict(X_test)
     
-    def plot_result(self, data, X_test, y_test, rf_pred):
+    def plot_result(self, data,y_train, X_test, y_test, rf_pred):
         """Plot actual vs predicted results."""
         # Determine the test data's index
-        test_start = data.index[len(data) - len(y_test) - self.prediction_step]
-        test_index = data.index[len(data) - len(y_test):]
+        # test_start = data.index[len(data) - len(y_test) - self.prediction_step]
+        # test_index = data.index[len(data) - len(y_test):]
         
         # Ensure rf_pred has the same length as y_test and test_index
+
         rf_pred = rf_pred[:len(y_test)]
         
         fig, axes = plt.subplots(2, 1, sharex=False, figsize=(9, 6), 
@@ -124,16 +119,18 @@ class RfConfig:
                                 gridspec_kw={'height_ratios': [1.5, 1]})
 
         # Full data plot
-        axes[0].plot(data['close'], label='Full Data')
-        axes[0].plot(test_index, y_test, linewidth=1.5, label='Actual Test')
-        axes[0].plot(test_index, rf_pred, color='green', label='Forecast')
-        axes[0].set_title('Close Price Estimations: Random Forest')
+        fig, axes = plt.subplots(2, 1, sharex=False, figsize=(9, 6), tight_layout=True, gridspec_kw={'height_ratios': [1.5, 1]})
+
+        axes[0].plot(y_train, label='train')
+        axes[0].plot(y_test, linewidth=1.5, label='test')
+        axes[0].plot(X_test.index, rf_pred, color='green', label='forecast')
+        axes[0].set_title('Close Price Estimations: XGBoosting Regression')
         axes[0].legend()
 
-        # Zoomed view
-        axes[1].plot(test_index, y_test, linewidth=1.5, label='Actual Test')
-        axes[1].plot(test_index, rf_pred, label='Forecast')
-        axes[1].set_xlim(pd.Timestamp('2023-01-01'), data.index[-1])
+        # zoomed view
+        axes[1].plot(X_test.index, y_test, linewidth=1.5, label='test')
+        axes[1].plot(X_test.index, rf_pred, label='forecast')
+        axes[1].set_xlim(y_test.index[0], y_test.index[-1]) 
         axes[1].set_ylim(min(y_test.min(), rf_pred.min()), max(y_test.max(), rf_pred.max()))
         axes[1].legend()
 
@@ -217,7 +214,7 @@ class RfConfig:
         print(f'Results saved to {path}')
         
         # Visualizations
-        self.plot_result(full_data, X_test, y_test, rf_pred)
+        self.plot_result(full_data,y_train, X_test, y_test, rf_pred)
         self.plot_feature_importance(rf_model, X_train)
         self.plot_residuals(y_test, rf_pred)
 

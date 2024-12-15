@@ -37,6 +37,14 @@ class Sarima_predictions():
         X_test = test.drop(['close'], axis=1)
         y_train = train['close']
         y_test = test['close']
+        print("Kích thước của X_train: ", X_train.shape)
+        print(X_train[:5])
+        print("Kích thước của y_train: ", y_train.shape)
+        print(y_train[:5])
+        print("Kích thước của X_test: ", X_test.shape)
+        print(X_test[:5])
+        print("Kích thước của y_test: ", y_test.shape)
+        print(y_test[:5])
         return X_train, X_test, y_train, y_test
 
 
@@ -182,6 +190,7 @@ class Sarima_predictions():
     def baseline_sarimax(self, path):
         data = self.read_data(path)
         X_train, X_test, y_train, y_test = self.split_data(data)
+        time.sleep(1000000)
         print('Training data:', X_train.shape, y_train.shape)
         model_fit, order, seasonal_order = self.fit(X_train, y_train)
         forecasts = self.predict(model_fit, y_train, X_train, X_test, y_test)
