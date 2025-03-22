@@ -68,7 +68,7 @@ To build a robust predictive model, the thesis utilized a multi-faceted dataset 
 
 ## Installation
 
-### Required Libraries:
+**Required Libraries:**
 
 * Python (>= 3.7 recommended)
 
@@ -98,9 +98,9 @@ The detailed results, including performance metrics and visualizations, are avai
 Key performance metrics for the best models (SARIMAX and SARIMAX + XGBOOST) are summarized in the thesis abstract and documentation.
 
 **Authors:**
-***Châu Mỹ Uyên*** - 20087481
+* ***Châu Mỹ Uyên*** - 20087481
 
-***Đặng Quốc Toàn*** - 20051051
+* ***Đặng Quốc Toàn*** - 20051051
 
 **Supervisors:**:
 
