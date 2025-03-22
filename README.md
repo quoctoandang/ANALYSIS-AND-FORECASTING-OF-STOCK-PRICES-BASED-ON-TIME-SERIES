@@ -24,7 +24,6 @@ The research aims to build a comprehensive forecasting model by integrating vari
 - [Data Sources](#data-sources)
 - [Key Features & Findings](#key-features--findings)
 - [Installation](#installation) <!-- Optional, if you have code to run -->
-- [Usage](#usage) <!-- Optional, if you have code to run -->
 - [Results](#results)
 - [Authors](#authors)
 - [License](#license) <!-- Optional -->
@@ -69,73 +68,52 @@ To build a robust predictive model, the thesis utilized a multi-faceted dataset 
 
 ## Installation
 
-<!-- **If you have code to share, provide instructions like this:** -->
+### Required Libraries:
 
-```bash
-# 1. Clone the repository
-git clone https://github.com/your-github-username/your-repo-name.git
-cd your-repo-name
+* Python (>= 3.7 recommended)
 
-# 2. Create a virtual environment (optional but recommended)
-python -m venv venv
-source venv/bin/activate  # On Linux/macOS
-venv\Scripts\activate  # On Windows
+* pandas
 
-Required Libraries:
+* numpy
 
-Python (>= 3.7 recommended)
+* statsmodels
 
-pandas
+* scikit-learn (sklearn)
 
-numpy
+* tensorflow/keras (if using LSTM)
 
-statsmodels
+* xgboost
 
-scikit-learn (sklearn)
+* yfinance
 
-tensorflow/keras (if using LSTM)
-
-xgboost
-
-yfinance
-
-requests (for EODHD API)
+* requests (for EODHD API)
 
 ... (add any other libraries you used, create a requirements.txt file for easy installation)
 
-Usage
-<!-- **If you have example code, you can describe how to use it here. For example:** -->
+For detailed usage instructions and code execution, please refer to the thesis document.
 
-Results
+## Results
 The detailed results, including performance metrics and visualizations, are available in the thesis document [link to your thesis document if hosted online, or mention its location in the repository].
 
 Key performance metrics for the best models (SARIMAX and SARIMAX + XGBOOST) are summarized in the thesis abstract and documentation.
 
-Authors
-Châu Mỹ Uyên - 20087481
+**Authors:**
+***Châu Mỹ Uyên*** - 20087481
 
-Đặng Quốc Toàn - 20051051
+***Đặng Quốc Toàn*** - 20051051
 
-Supervisors:
+**Supervisors:**:
 
-Instructor 1: TS. Nguyễn Chí Kiên (PhD. Nguyen Chi Kien)
+* Instructor 1: TS. Nguyễn Chí Kiên (PhD. Nguyen Chi Kien)
 
-Instructor 2: TS. Vũ Đức Thịnh (PhD. Vu Duc Thinh)
+* Instructor 2: TS. Vũ Đức Thịnh (PhD. Vu Duc Thinh)
 
-Industrial University of Ho Chi Minh City
-Faculty of Information Technology
-December 2024
+* Industrial University of Ho Chi Minh City
+* Faculty of Information Technology
+* December 2024
 
-License
+## License
 <!-- **Choose a license if you want to specify how others can use your work. A common open-source license is MIT License. If you choose to use one, add a LICENSE file to your repository and update the badge at the top.** -->
 This project is licensed under the MIT License - see the LICENSE file for details. <!-- Remove this line if you don't include a license -->
 
 Feel free to adapt this README to better reflect your project and add more specific details. Good luck with your thesis project!
-
-**Remember to:**
-
-* **Replace placeholders:** Update `your-github-username`, `your-repo-name`, `LICENSE`, links, code examples, and authors' information with your actual details.
-* **Create `requirements.txt` (if applicable):**  List all Python libraries your code depends on in a `requirements.txt` file.
-* **Add a License file (Optional but recommended):** If you want to specify the license for your project, create a `LICENSE` file (e.g., using the MIT License template) and include it in your repository.
-* **Include your thesis document:** If possible, include the full thesis document (PDF) in your repository so others can review your work in detail. You can link to it in the "Results" section.
-* **Review and refine:** Read through the README and make any necessary adjustments to ensure it is clear, informative, and accurate.
